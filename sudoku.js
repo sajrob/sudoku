@@ -127,15 +127,19 @@ const handleKeydown = function(e) {
 };
 
 const checkSolution = () => {
+    // Get all input elements from the Sudoku board
     const inputs = document.querySelectorAll('#sudoku-board input');
     let isCorrect = true;
 
+    // Create a copy of the current grid and solve it
     let solvedGrid = sudokuGrid.map(row => [...row]);
     solveSudoku(solvedGrid);
 
+    // Remove previous result classes and messages
     inputs.forEach(input => input.classList.remove('correct', 'incorrect'));
     document.querySelector('.result-message')?.remove();
 
+    // Check each cell against the solved grid
     for (let i = 0; i < GRID_SIZE; i++) {
         for (let j = 0; j < GRID_SIZE; j++) {
             const input = inputs[i * GRID_SIZE + j];
@@ -150,6 +154,7 @@ const checkSolution = () => {
         }
     }
 
+    // Display the result message
     displayResultMessage(isCorrect);
 };
 
