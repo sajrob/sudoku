@@ -1,104 +1,103 @@
-// Sudoku game logic
+// Constants for game setup
+const GRID_SIZE = 9;
+const BOX_SIZE = 3;
+const EMPTY_CELL = 0;
+const NUMBERS = Array.from({length: GRID_SIZE}, (_, i) => i + 1);
+
+// DOM element references
 const board = document.getElementById('sudoku-board');
 const newGameBtn = document.getElementById('new-game');
 const solveBtn = document.getElementById('solve');
 const checkBtn = document.getElementById('check');
 
+// Global variable to store the current Sudoku grid
 let sudokuGrid = [];
 
-function generateSudoku() {
-    // Generate a new 5x5 Sudoku puzzle (simplified version)
-    sudokuGrid = Array(5).fill().map(() => Array(5).fill(0));
-    
-    function isValid(row, col, num) {
-        for (let i = 0; i < 5; i++) {
-            if (sudokuGrid[row][i] === num || sudokuGrid[i][col] === num) return false;
-        }
-        const boxRow = Math.floor(row / 2) * 2;
-        const boxCol = Math.floor(col / 3) * 3;
-        for (let i = 0; i < 2; i++) {
-            for (let j = 0; j < 3; j++) {
-                if (sudokuGrid[boxRow + i][boxCol + j] === num) return false;
-            }
-        }
-        return true;
+// Function to check if a number is valid in a given position
+function isValid(grid, row, col, num) {
+    // Check row and column
+    for (let i = 0; i < GRID_SIZE; i++) {
+        if (grid[row][i] === num || grid[i][col] === num) return false;
     }
-
-    function fillGrid(row = 0, col = 0) {
-        if (col === 5) {
-            row++;
-            col = 0;
+    
+    // Check 3x3 box
+    const boxRow = Math.floor(row / BOX_SIZE) * BOX_SIZE;
+    const boxCol = Math.floor(col / BOX_SIZE) * BOX_SIZE;
+    for (let i = 0; i < BOX_SIZE; i++) {
+        for (let j = 0; j < BOX_SIZE; j++) {
+            if (grid[boxRow + i][boxCol + j] === num) return false;
         }
-        if (row === 5) return true;
+    }
+    return true;
+}
 
-        if (sudokuGrid[row][col] !== 0) return fillGrid(row, col + 1);
+// Recursive function to solve the Sudoku puzzle
+function solveSudoku(grid, shuffle = false, maxAttempts = 1000000) {
+    let attempts = 0;
+    
+    function solve() {
+        if (attempts++ > maxAttempts) return false;
+        
+        const emptyCell = findEmptyCell(grid);
+        if (!emptyCell) return true;
 
-        const nums = [1, 2, 3, 4, 5];
-        for (let i = nums.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [nums[i], nums[j]] = [nums[j], nums[i]];
-        }
-
-        for (let num of nums) {
-            if (isValid(row, col, num)) {
-                sudokuGrid[row][col] = num;
-                if (fillGrid(row, col + 1)) return true;
-                sudokuGrid[row][col] = 0;
+        const [row, col] = emptyCell;
+        const numbers = shuffle ? shuffleArray([...NUMBERS]) : NUMBERS;
+        
+        for (let num of numbers) {
+            if (isValid(grid, row, col, num)) {
+                grid[row][col] = num;
+                if (solve()) return true;
+                grid[row][col] = EMPTY_CELL;
             }
         }
         return false;
     }
 
-    // Add a maximum number of attempts to prevent infinite loops
-    let attempts = 0;
-    const maxAttempts = 100;
+    return solve();
+}
+
+// Function to generate a new Sudoku puzzle
+function generateSudoku() {
+    sudokuGrid = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(EMPTY_CELL));
+    solveSudoku(sudokuGrid, true);
     
-    while (attempts < maxAttempts) {
-        sudokuGrid = Array(5).fill().map(() => Array(5).fill(0));
-        if (fillGrid()) {
-            break;
-        }
-        attempts++;
-    }
-
-    if (attempts === maxAttempts) {
-        console.error("Failed to generate a valid Sudoku grid");
-        // Generate a simple valid grid as a fallback
-        sudokuGrid = [
-            [1, 2, 3, 4, 5],
-            [2, 3, 4, 5, 1],
-            [3, 4, 5, 1, 2],
-            [4, 5, 1, 2, 3],
-            [5, 1, 2, 3, 4]
-        ];
-    }
-
-    const cellsToRemove = 15;
+    // Remove numbers to create the puzzle
+    const cellsToRemove = 40;
     for (let i = 0; i < cellsToRemove; i++) {
         let row, col;
         do {
-            row = Math.floor(Math.random() * 5);
-            col = Math.floor(Math.random() * 5);
-        } while (sudokuGrid[row][col] === 0);
-        sudokuGrid[row][col] = 0;
+            row = Math.floor(Math.random() * GRID_SIZE);
+            col = Math.floor(Math.random() * GRID_SIZE);
+        } while (sudokuGrid[row][col] === EMPTY_CELL);
+        sudokuGrid[row][col] = EMPTY_CELL;
     }
 }
 
+// Function to render the Sudoku board on the webpage
 function renderBoard() {
     board.innerHTML = '';
     const fragment = document.createDocumentFragment();
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < GRID_SIZE; i++) {
         const row = document.createElement('tr');
-        for (let j = 0; j < 5; j++) {
+        for (let j = 0; j < GRID_SIZE; j++) {
             const cell = document.createElement('td');
             const input = document.createElement('input');
-            input.type = 'number';
-            input.min = 1;
-            input.max = 5;
+            input.type = 'text';
+            input.maxLength = 1;
             input.value = sudokuGrid[i][j] || '';
-            if (sudokuGrid[i][j] !== 0) {
-                input.readOnly = true;
-            }
+            input.readOnly = sudokuGrid[i][j] !== EMPTY_CELL;
+            input.setAttribute('inputmode', 'numeric');
+            input.setAttribute('pattern', '[1-9]');
+            input.addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^1-9]/g, '').slice(0, 1);
+            });
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' || e.key === 'Delete') {
+                    this.value = '';
+                    e.preventDefault();
+                }
+            });
             cell.appendChild(input);
             row.appendChild(cell);
         }
@@ -107,129 +106,81 @@ function renderBoard() {
     board.appendChild(fragment);
 }
 
+// Helper function to find an empty cell in the grid
+function findEmptyCell(grid) {
+    for (let i = 0; i < GRID_SIZE; i++) {
+        for (let j = 0; j < GRID_SIZE; j++) {
+            if (grid[i][j] === EMPTY_CELL) return [i, j];
+        }
+    }
+    return null;
+}
+
+// Helper function to shuffle an array
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+// Function to check the player's solution
+function checkSolution() {
+    const inputs = document.querySelectorAll('#sudoku-board input');
+    let isCorrect = true;
+
+    // Create a copy of the current grid and solve it
+    let solvedGrid = sudokuGrid.map(row => [...row]);
+    solveSudoku(solvedGrid);
+
+    inputs.forEach(input => input.classList.remove('correct', 'incorrect'));
+    document.querySelector('.result-message')?.remove();
+
+    for (let i = 0; i < GRID_SIZE; i++) {
+        for (let j = 0; j < GRID_SIZE; j++) {
+            const input = inputs[i * GRID_SIZE + j];
+            const value = parseInt(input.value) || 0;
+
+            if (value !== solvedGrid[i][j]) {
+                input.classList.add('incorrect');
+                isCorrect = false;
+            } else {
+                input.classList.add('correct');
+            }
+        }
+    }
+
+    // Display result message
+    const resultMessage = document.createElement('div');
+    resultMessage.className = `result-message ${isCorrect ? 'correct' : 'incorrect'}`;
+    resultMessage.textContent = isCorrect ? 'Congratulations! You are smart!!' : 'Sorry, there are some errors. Please try again.';
+    document.querySelector('.sudoku-container').appendChild(resultMessage);
+
+    // Remove highlighting and message after 3 seconds
+    setTimeout(() => {
+        inputs.forEach(input => input.classList.remove('correct', 'incorrect'));
+        resultMessage.remove();
+    }, 3000);
+
+    // Scroll to the result message on mobile devices
+    if (window.innerWidth <= 600) {
+        resultMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+}
+
+// Event listeners for buttons
 newGameBtn.addEventListener('click', () => {
     generateSudoku();
     renderBoard();
 });
 
 solveBtn.addEventListener('click', () => {
-    // Add solving logic here for 5x5 grid
-    function solveSudoku() {
-        const emptyCell = findEmptyCell();
-        if (!emptyCell) {
-            return true; // Puzzle solved
-        }
-
-        const [row, col] = emptyCell;
-
-        for (let num = 1; num <= 5; num++) {
-            if (isValidMove(row, col, num)) {
-                sudokuGrid[row][col] = num;
-
-                if (solveSudoku()) {
-                    return true;
-                }
-
-                sudokuGrid[row][col] = 0; // Backtrack
-            }
-        }
-
-        return false; // No solution found
-    }
-
-    function findEmptyCell() {
-        for (let i = 0; i < 5; i++) {
-            for (let j = 0; j < 5; j++) {
-                if (sudokuGrid[i][j] === 0) {
-                    return [i, j];
-                }
-            }
-        }
-        return null;
-    }
-
-    function isValidMove(row, col, num) {
-        // Check row
-        for (let i = 0; i < 5; i++) {
-            if (sudokuGrid[row][i] === num) {
-                return false;
-            }
-        }
-
-        // Check column
-        for (let i = 0; i < 5; i++) {
-            if (sudokuGrid[i][col] === num) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    if (solveSudoku()) {
-        console.log("Sudoku solved!");
-    } else {
-        console.log("No solution exists.");
-    }
+    solveSudoku(sudokuGrid);
     renderBoard();
 });
 
-checkBtn.addEventListener('click', () => {
-    function checkSolution() {
-        const inputs = document.querySelectorAll('#sudoku-board input');
-        let isCorrect = true;
-
-        // Remove previous color classes and result message
-        inputs.forEach(input => {
-            input.classList.remove('correct', 'incorrect');
-        });
-        const existingMessage = document.querySelector('.result-message');
-        if (existingMessage) {
-            existingMessage.remove();
-        }
-
-        // Check each cell
-        for (let i = 0; i < 5; i++) {
-            for (let j = 0; j < 5; j++) {
-                const input = inputs[i * 5 + j];
-                const value = parseInt(input.value);
-
-                if (isNaN(value) || value < 1 || value > 5) {
-                    input.classList.add('incorrect');
-                    isCorrect = false;
-                } else {
-                    // Check row
-                    const rowValues = sudokuGrid[i].filter((v, index) => index !== j);
-                    // Check column
-                    const colValues = sudokuGrid.map(row => row[j]).filter((v, index) => index !== i);
-
-                    if (rowValues.includes(value) || colValues.includes(value)) {
-                        input.classList.add('incorrect');
-                        isCorrect = false;
-                    } else {
-                        input.classList.add('correct');
-                    }
-                }
-            }
-        }
-
-        // Display result message
-        const resultMessage = document.createElement('div');
-        resultMessage.className = `result-message ${isCorrect ? 'correct' : 'incorrect'}`;
-        resultMessage.textContent = isCorrect ? 'Congratulations! You are smart!' : 'Sorry Lizzie, you missed a few. Please try again ;).';
-        document.querySelector('.sudoku-container').appendChild(resultMessage);
-
-        // Remove check results after 3 seconds
-        setTimeout(() => {
-            inputs.forEach(input => {
-                input.classList.remove('correct', 'incorrect');
-            });
-            resultMessage.remove();
-        }, 1000);
-    }
-
-    checkSolution();
-});
+checkBtn.addEventListener('click', checkSolution);
 
 // Initialize the game
 generateSudoku();
