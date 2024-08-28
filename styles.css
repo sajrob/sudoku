@@ -66,7 +66,6 @@ main {
 
 main p {
     font-size: 1.1rem;
-    margin-bottom: 2rem;
 }
 
 /* Footer Styles */
@@ -143,7 +142,7 @@ footer {
 }
 
 #sudoku-board input.incorrect {
-    background-color: #FFB6C1;
+    background-color: #fc9f9f;
 }
 
 /* Result Message Styles */
@@ -164,21 +163,25 @@ footer {
 /* Control Button Styles */
 .controls {
     text-align: center;
-    margin-top: 2rem;
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px; /* Add space between buttons */
 }
 
 .controls button {
     background-color: #4F6F52;
     color: white;
     border: none;
-    padding: 12px 24px;
-    margin: 5px;
-    font-size: 1rem;
+    padding: 8px 16px; /* Reduced padding */
+    font-size: 0.9rem; /* Smaller font size */
     font-weight: 500;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 4px; /* Slightly reduced border radius */
     transition: background-color 0.3s ease, transform 0.1s ease;
     font-family: 'Poppins', sans-serif;
+    flex: 0 1 auto;
 }
 
 .controls button:hover {

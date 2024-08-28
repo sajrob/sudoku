@@ -161,13 +161,13 @@ const checkSolution = () => {
 const displayResultMessage = (isCorrect) => {
     const resultMessage = document.createElement('div');
     resultMessage.className = `result-message ${isCorrect ? 'correct' : 'incorrect'}`;
-    resultMessage.textContent = isCorrect ? 'Congratulations! You are smart!!' : 'Sorry, there are some errors. Please try again.';
+    resultMessage.textContent = isCorrect ? 'Congratulations! You are smart!!' : 'Sorry, you missed a few. Please trying.';
     document.querySelector('.sudoku-container').appendChild(resultMessage);
 
     setTimeout(() => {
         document.querySelectorAll('#sudoku-board input').forEach(input => input.classList.remove('correct', 'incorrect'));
         resultMessage.remove();
-    }, 3000);
+    }, 2000);
 
     if (window.innerWidth <= 600) {
         resultMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
