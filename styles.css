@@ -1,0 +1,87 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+header {
+    background-color: hwb(94 4% 70%);
+    color: white;
+    text-align: center;
+    padding: 0.5rem;
+}
+main {
+    text-align: center;
+    flex: 1;
+    padding: 0.5rem;
+}
+footer {
+    background-color: hsl(94, 75%, 11%);
+    color: white;
+    text-align: center;
+    padding: 1rem;
+}
+/* Add styles for the Sudoku grid */
+#sudoku-board {
+    border-collapse: collapse;
+    margin: 20px auto;
+}
+#sudoku-board td {
+    border: 1px solid #ccc;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+}
+#sudoku-board input {
+    width: 100%;
+    height: 100%;
+    border: none;
+    text-align: center;
+    font-size: 18px;
+}
+#sudoku-board input.correct {
+    background-color: #90EE90; /* Light green */
+}
+#sudoku-board input.incorrect {
+    background-color: #FFB6C1; /* Light red */
+}
+.result-message {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 10px;
+}
+.result-message.correct {
+    color: green;
+}
+.result-message.incorrect {
+    color: red;
+}
+
+/* Styles for buttons */
+.controls button {
+    background-color: #4b5320; /* Camo green */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.controls button:hover {
+    background-color: #5a6427; /* Slightly lighter camo green for hover effect */
+}
+
+.controls button:active {
+    background-color: #3c4219; /* Slightly darker camo green for active state */
+}
+
+.controls button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(75, 83, 32, 0.5); /* Focus ring in camo green */
+}
+
