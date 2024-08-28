@@ -1,40 +1,97 @@
+/* Global Styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 0;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    background-color: #f9f8f8;
+    color: #333;
 }
+
+/* Header Styles */
 header {
-    background-color: hwb(94 4% 70%);
+    background-color: #4F6F52; 
+    color: #F5EFE6;
+    padding: 1rem;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.site-title {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+/* Navigation Styles */
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+}
+
+nav ul li {
+    margin-left: 1rem;
+}
+
+nav ul li a {
     color: white;
-    text-align: center;
-    padding: 0.5rem;
+    text-decoration: none;
+    transition: color 0.3s ease;
 }
+
+nav ul li a:hover {
+    color: #e6e6e6;
+}
+
+/* Main Content Styles */
 main {
-    text-align: center;
     flex: 1;
-    padding: 0.5rem;
+    padding: 2rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
+
+main p {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+/* Footer Styles */
 footer {
-    background-color: hsl(94, 75%, 11%);
+    background-color: #4F6F52;
     color: white;
     text-align: center;
     padding: 1rem;
+    font-size: 0.9rem;
 }
-/* Add styles for the Sudoku grid */
+
+/* Sudoku Board Styles */
 #sudoku-board {
     border-collapse: collapse;
     margin: 20px auto;
-    border: 3px solid #333;
+    border: 3px solid #1A4D2E;
+    background-color: #F5EFE6;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 #sudoku-board td {
     width: 50px;
     height: 50px;
     text-align: center;
-    border: 1px solid #ccc;
+    border: 1px solid #1A4D2E;
 }
 
 #sudoku-board input {
@@ -42,12 +99,17 @@ footer {
     height: 100%;
     border: none;
     text-align: center;
-    font-size: 18px;
+    font-size: 1.2rem;
+    font-weight: bold;
     padding: 0;
     box-sizing: border-box;
+    color: #1A4D2E;
+    ;
+    background-color: transparent;
+    font-family: 'Poppins', sans-serif;
 }
 
-/* Styles for 3x3 blocks */
+/* Sudoku Board Grid Lines */
 #sudoku-board tr:nth-child(3n) td {
     border-bottom: 2px solid #333;
 }
@@ -56,68 +118,84 @@ footer {
     border-right: 2px solid #333;
 }
 
-/* Alternating background colors for 3x3 blocks */
+/* Sudoku Board Alternating Box Colors */
 #sudoku-board tr:nth-child(n+1):nth-child(-n+3) td:nth-child(n+1):nth-child(-n+3),
 #sudoku-board tr:nth-child(n+1):nth-child(-n+3) td:nth-child(n+7):nth-child(-n+9),
 #sudoku-board tr:nth-child(n+4):nth-child(-n+6) td:nth-child(n+4):nth-child(-n+6),
 #sudoku-board tr:nth-child(n+7):nth-child(-n+9) td:nth-child(n+1):nth-child(-n+3),
 #sudoku-board tr:nth-child(n+7):nth-child(-n+9) td:nth-child(n+7):nth-child(-n+9) {
-    background-color: #f0f0f0;
+    background-color: #f0f4f3; /* Slightly darker shade for contrast */
 }
 
+/* Sudoku Board Input States */
 #sudoku-board input:focus {
     background-color: #e6f3ff;
     outline: none;
 }
 
 #sudoku-board input[readonly] {
-    font-weight: bold;
-    color: #333;
+    font-weight: normal;
+    color: #4F6F52; /* Darker color for pre-filled numbers */
 }
 
 #sudoku-board input.correct {
-    background-color: #90EE90; /* Light green */
+    background-color: #90EE90;
 }
 
 #sudoku-board input.incorrect {
-    background-color: #FFB6C1; /* Light red */
+    background-color: #FFB6C1;
 }
 
+/* Result Message Styles */
 .result-message {
     text-align: center;
     font-weight: bold;
     margin-top: 10px;
 }
+
 .result-message.correct {
     color: green;
 }
+
 .result-message.incorrect {
     color: red;
 }
 
-/* Styles for buttons */
+/* Control Button Styles */
+.controls {
+    text-align: center;
+    margin-top: 2rem;
+}
+
 .controls button {
-    background-color: #4b5320; /* Camo green */
+    background-color: #4F6F52;
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 12px 24px;
     margin: 5px;
-    font-size: 16px;
+    font-size: 1rem;
+    font-weight: 500;
     cursor: pointer;
     border-radius: 5px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    font-family: 'Poppins', sans-serif;
 }
 
 .controls button:hover {
-    background-color: #5a6427; /* Slightly lighter camo green for hover effect */
+    background-color: #1A4D2E;
+    transform: translateY(-2px);
 }
 
 .controls button:active {
-    background-color: #3c4219; /* Slightly darker camo green for active state */
+    transform: translateY(0);
 }
 
 .controls button:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(75, 83, 32, 0.5); /* Focus ring in camo green */
+    box-shadow: 0 0 0 3px rgba(75, 83, 32, 0.5);
 }
 
+/* Utility Classes */
+.centered-content {
+    text-align: center;
+}
