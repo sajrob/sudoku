@@ -216,7 +216,7 @@ checkBtn.addEventListener('click', () => {
         // Display result message
         const resultMessage = document.createElement('div');
         resultMessage.className = `result-message ${isCorrect ? 'correct' : 'incorrect'}`;
-        resultMessage.textContent = isCorrect ? 'Congratulations! Your solution is correct!' : 'Sorry Lizzie, you missed a few. Please try again ;).';
+        resultMessage.textContent = isCorrect ? 'Congratulations! You are smart!' : 'Sorry Lizzie, you missed a few. Please try again ;).';
         document.querySelector('.sudoku-container').appendChild(resultMessage);
 
         // Remove check results after 3 seconds
