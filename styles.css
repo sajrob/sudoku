@@ -74,10 +74,14 @@ main p {
 /* Footer Styles */
 footer {
     background-color: #4F6F52;
-    color: white;
+    color: #f5efe6;
     text-align: center;
     padding: 1rem;
-    font-size: 0.9rem;
+}
+
+footer a {
+    color: #00adb5;
+    text-decoration: none;
 }
 
 /* Sudoku Board Styles */
