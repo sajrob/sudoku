@@ -1,18 +1,24 @@
 // Constants
+// These define the size and structure of the Sudoku grid
 const GRID_SIZE = 9;
 const BOX_SIZE = 3;
 const EMPTY_CELL = 0;
 const NUMBERS = Array.from({length: GRID_SIZE}, (_, i) => i + 1);
 
 // DOM elements
+// These are references to important elements in the HTML
 const board = document.getElementById('sudoku-board');
 const newGameBtn = document.getElementById('new-game');
 const solveBtn = document.getElementById('solve');
 const checkBtn = document.getElementById('check');
 
+// The main Sudoku grid, initialized as an empty array
 let sudokuGrid = [];
 
 // Helper functions
+// These functions assist in various Sudoku operations
+
+// Checks if a number is valid in a given position
 const isValid = (grid, row, col, num) => {
     for (let i = 0; i < GRID_SIZE; i++) {
         if (grid[row][i] === num || grid[i][col] === num) return false;
@@ -28,6 +34,7 @@ const isValid = (grid, row, col, num) => {
     return true;
 };
 
+// Finds the next empty cell in the grid
 const findEmptyCell = (grid) => {
     for (let i = 0; i < GRID_SIZE; i++) {
         for (let j = 0; j < GRID_SIZE; j++) {
@@ -37,6 +44,7 @@ const findEmptyCell = (grid) => {
     return null;
 };
 
+// Randomly shuffles an array (used for generating puzzles)
 const shuffleArray = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -46,12 +54,11 @@ const shuffleArray = (array) => {
 };
 
 // Core functions
-const solveSudoku = (grid, shuffle = false, maxAttempts = 1000000) => {
-    let attempts = 0;
-    
+// These functions handle the main Sudoku logic
+
+// Solves the Sudoku puzzle using backtracking
+const solveSudoku = (grid, shuffle = false) => {
     const solve = () => {
-        if (attempts++ > maxAttempts) return false;
-        
         const emptyCell = findEmptyCell(grid);
         if (!emptyCell) return true;
 
@@ -71,10 +78,13 @@ const solveSudoku = (grid, shuffle = false, maxAttempts = 1000000) => {
     return solve();
 };
 
+// Generates a new Sudoku puzzle
 const generateSudoku = () => {
+    // Creates a solved Sudoku grid
     sudokuGrid = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(EMPTY_CELL));
     solveSudoku(sudokuGrid, true);
     
+    // Removes cells to create the puzzle
     const cellsToRemove = 40;
     for (let i = 0; i < cellsToRemove; i++) {
         let row, col;
@@ -86,6 +96,10 @@ const generateSudoku = () => {
     }
 };
 
+// UI functions
+// These functions handle the user interface
+
+// Renders the Sudoku board on the page
 const renderBoard = () => {
     board.innerHTML = '';
     const fragment = document.createDocumentFragment();
@@ -102,6 +116,7 @@ const renderBoard = () => {
     board.appendChild(fragment);
 };
 
+// Creates an input element for a cell
 const createInput = (i, j) => {
     const input = document.createElement('input');
     input.type = 'text';
@@ -110,36 +125,34 @@ const createInput = (i, j) => {
     input.readOnly = sudokuGrid[i][j] !== EMPTY_CELL;
     input.setAttribute('inputmode', 'numeric');
     input.setAttribute('pattern', '[1-9]');
-    input.addEventListener('input', handleInput);
     input.addEventListener('keydown', handleKeydown);
     return input;
 };
 
-const handleInput = function() {
-    this.value = this.value.replace(/[^1-9]/g, '').slice(0, 1);
-};
-
+// Handles keydown events on input cells
 const handleKeydown = function(e) {
-    if (e.key === 'Backspace' || e.key === 'Delete') {
+    if (e.key >= '1' && e.key <= '9') {
+        e.preventDefault();
+        this.value = e.key;
+    } else if (e.key === 'Backspace' || e.key === 'Delete') {
+        e.preventDefault();
         this.value = '';
+    } else {
         e.preventDefault();
     }
 };
 
+// Checks the user's solution
 const checkSolution = () => {
-    // Get all input elements from the Sudoku board
     const inputs = document.querySelectorAll('#sudoku-board input');
     let isCorrect = true;
 
-    // Create a copy of the current grid and solve it
     let solvedGrid = sudokuGrid.map(row => [...row]);
     solveSudoku(solvedGrid);
 
-    // Remove previous result classes and messages
     inputs.forEach(input => input.classList.remove('correct', 'incorrect'));
     document.querySelector('.result-message')?.remove();
 
-    // Check each cell against the solved grid
     for (let i = 0; i < GRID_SIZE; i++) {
         for (let j = 0; j < GRID_SIZE; j++) {
             const input = inputs[i * GRID_SIZE + j];
@@ -154,14 +167,14 @@ const checkSolution = () => {
         }
     }
 
-    // Display the result message
     displayResultMessage(isCorrect);
 };
 
+// Displays a message after checking the solution
 const displayResultMessage = (isCorrect) => {
     const resultMessage = document.createElement('div');
     resultMessage.className = `result-message ${isCorrect ? 'correct' : 'incorrect'}`;
-    resultMessage.textContent = isCorrect ? 'Congratulations! You are smart!!' : 'Sorry, you missed a few. Please trying.';
+    resultMessage.textContent = isCorrect ? 'Congratulations! You are smart!!' : 'Sorry, you missed a few. Please going!';
     document.querySelector('.sudoku-container').appendChild(resultMessage);
 
     setTimeout(() => {
@@ -175,6 +188,7 @@ const displayResultMessage = (isCorrect) => {
 };
 
 // Event listeners
+// These set up the interactivity of the game
 newGameBtn.addEventListener('click', () => {
     generateSudoku();
     renderBoard();
@@ -188,5 +202,6 @@ solveBtn.addEventListener('click', () => {
 checkBtn.addEventListener('click', checkSolution);
 
 // Initialize the game
+// This starts the game when the page loads
 generateSudoku();
 renderBoard();
