@@ -121,37 +121,24 @@ const createInput = (i, j) => {
     const input = document.createElement('input');
     input.type = 'text';
     input.maxLength = 1;
-    input.value = sudokuGrid[i][j] || ''; // Sets the value of the input based on the sudokuGrid
-    input.readOnly = sudokuGrid[i][j] !== EMPTY_CELL; // Makes the input read-only if it's not an empty cell
-    input.setAttribute('inputmode', 'none'); // Disable device keyboard
+    input.value = sudokuGrid[i][j] || '';
+    input.readOnly = sudokuGrid[i][j] !== EMPTY_CELL;
+    input.setAttribute('inputmode', 'numeric');
     input.setAttribute('pattern', '[1-9]');
-    input.addEventListener('focus', () => handleCellFocus(input));
+    input.addEventListener('keydown', handleKeydown);
     return input;
 };
 
-// Handles cell focus to highlight the selected cell
-const handleCellFocus = (input) => {
-    document.querySelectorAll('#sudoku-board input').forEach(cell => cell.classList.remove('selected'));
-    input.classList.add('selected');
-};
-
-// Handles number key clicks
-const handleNumberKeyClick = (num) => {
-    const selectedCell = document.querySelector('#sudoku-board input.selected');
-    if (selectedCell && !selectedCell.readOnly) { // Ensure the selected cell is not read-only
-        selectedCell.value = num;
-    }
-};
-
-// Renders the on-screen number keyboard
-const renderNumberKeyboard = () => {
-    const keyboard = document.querySelector('.number-keyboard');
-    keyboard.innerHTML = '';
-    for (let num = 1; num <= 9; num++) {
-        const button = document.createElement('button');
-        button.textContent = num;
-        button.addEventListener('click', () => handleNumberKeyClick(num));
-        keyboard.appendChild(button);
+// Handles keydown events on input cells
+const handleKeydown = function(e) {
+    if (e.key >= '1' && e.key <= '9') {
+        e.preventDefault();
+        this.value = e.key;
+    } else if (e.key === 'Backspace' || e.key === 'Delete') {
+        e.preventDefault();
+        this.value = '';
+    } else {
+        e.preventDefault();
     }
 };
 
@@ -218,4 +205,3 @@ checkBtn.addEventListener('click', checkSolution);
 // This starts the game when the page loads
 generateSudoku();
 renderBoard();
-renderNumberKeyboard();
