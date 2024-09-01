@@ -88,7 +88,7 @@ footer a {
 #sudoku-board {
     border-collapse: collapse;
     margin: 20px auto;
-    border: 3px solid #1A4D2E;
+    border: 3px solid #4F6F52;
     background-color: #F5EFE6;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -135,12 +135,12 @@ footer a {
 
 /* Sudoku Board Input States */
 #sudoku-board input:focus {
-    background-color: #e6f3ff;
+    background-color: #e6ffee;
     outline: none;
 }
 
 #sudoku-board input[readonly] {
-    font-weight: normal;
+    font-weight: 400;
     color: #4F6F52; /* Darker color for pre-filled numbers */
 }
 
@@ -208,4 +208,41 @@ footer a {
 /* Utility Classes */
 .centered-content {
     text-align: center;
+}
+
+/* On-Screen Keyboard Styles */
+.number-keyboard {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.number-keyboard button {
+    background-color: #4F6F52;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    font-family: 'Poppins', sans-serif;
+    flex: 0 1 auto;
+}
+
+.number-keyboard button:hover {
+    background-color: #1A4D2E;
+    transform: translateY(-2px);
+}
+
+.number-keyboard button:active {
+    transform: translateY(0);
+}
+
+.number-keyboard button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(75, 83, 32, 0.5);
 }
