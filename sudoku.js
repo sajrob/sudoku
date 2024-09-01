@@ -121,24 +121,44 @@ const createInput = (i, j) => {
     const input = document.createElement('input');
     input.type = 'text';
     input.maxLength = 1;
-    input.value = sudokuGrid[i][j] || '';
-    input.readOnly = sudokuGrid[i][j] !== EMPTY_CELL;
-    input.setAttribute('inputmode', 'numeric');
+    input.value = sudokuGrid[i][j] || ''; // Sets the value of the input based on the sudokuGrid
+    input.readOnly = sudokuGrid[i][j] !== EMPTY_CELL; // Makes the input read-only if it's not an empty cell
+    input.setAttribute('inputmode', 'none'); // Disable device keyboard
     input.setAttribute('pattern', '[1-9]');
-    input.addEventListener('keydown', handleKeydown);
+    input.addEventListener('focus', () => handleCellFocus(input));
+    input.addEventListener('keydown', handleInput); // Add this line
+    // Prevent paste events
+    input.addEventListener('paste', (e) => e.preventDefault());
     return input;
 };
 
-// Handles keydown events on input cells
-const handleKeydown = function(e) {
-    if (e.key >= '1' && e.key <= '9') {
-        e.preventDefault();
-        this.value = e.key;
-    } else if (e.key === 'Backspace' || e.key === 'Delete') {
-        e.preventDefault();
-        this.value = '';
-    } else {
-        e.preventDefault();
+// Handles cell focus to highlight the selected cell
+const handleCellFocus = (input) => {
+    document.querySelectorAll('#sudoku-board input').forEach(cell => cell.classList.remove('selected'));
+    input.classList.add('selected');
+};
+
+// Handles number key clicks
+const handleNumberKeyClick = (num) => {
+    const selectedCell = document.querySelector('#sudoku-board input.selected');
+    if (selectedCell && !selectedCell.readOnly) {
+        handleInput.call(selectedCell, {
+            type: 'keydown',  // Changed from 'click' to 'keydown'
+            key: num.toString(),  // Use 'key' instead of 'target'
+            preventDefault: () => {}  // Add a dummy preventDefault function
+        });
+    }
+};
+
+// Renders the on-screen number keyboard
+const renderNumberKeyboard = () => {
+    const keyboard = document.querySelector('.number-keyboard');
+    keyboard.innerHTML = '';
+    for (let num = 1; num <= 9; num++) {
+        const button = document.createElement('button');
+        button.textContent = num;
+        button.addEventListener('click', () => handleNumberKeyClick(num));
+        keyboard.appendChild(button);
     }
 };
 
@@ -201,7 +221,38 @@ solveBtn.addEventListener('click', () => {
 
 checkBtn.addEventListener('click', checkSolution);
 
+/**
+ * Handles input for both physical and on-screen keyboards
+ * @param {Event} e - The input event
+ */
+const handleInput = function(e) {
+    // If the cell is read-only (pre-filled), ignore any input
+    if (this.readOnly) return;
+
+    // Check if the event is a keydown event (from physical keyboard)
+    if (e.type === 'keydown') {
+        // Prevent the default action for all keys
+        // This stops the browser's default behavior for key presses
+        e.preventDefault();
+
+        // Check if the pressed key is a number between 1 and 9
+        if (e.key >= '1' && e.key <= '9') {
+            // If it is, set the cell's value to this number
+           
+            this.value = e.key;  // This replaces any existing value in the cell
+        } else if (e.key === 'Backspace' || e.key === 'Delete') {
+            // If Backspace or Delete key is pressed, clear the cell
+            this.value = '';
+        }
+        // All other keys are ignored and have no effect
+        // This includes letters, symbols, and numbers like 0
+    }
+    // Note: The function doesn't handle non-keydown events
+    // This is because on-screen keyboard clicks are simulated as keydown events
+};
+
 // Initialize the game
 // This starts the game when the page loads
 generateSudoku();
 renderBoard();
+renderNumberKeyboard();
