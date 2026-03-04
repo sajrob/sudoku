@@ -1,8 +1,12 @@
 /* Global Styles */
-body {
-    font-family: 'Poppins', sans-serif;
+html, body {
+    height: 100%;
     margin: 0;
     padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -56,14 +60,12 @@ nav ul li a:hover {
 
 /* Main Content Styles */
 main {
-    flex: 1;
-    padding-top: 0px;
-    padding-bottom: 15px;
-    padding: 1rem;
+    flex: 1 0 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
+    padding: 1rem;
 }
 
 main p {
@@ -75,8 +77,23 @@ main p {
 footer {
     background-color: #4F6F52;
     color: #f5efe6;
-    text-align: center;
     padding: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: auto;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.footer-content p {
+    margin: 0;
 }
 
 footer a {
@@ -245,4 +262,61 @@ footer a {
 .number-keyboard button:focus {
     outline: none;
     box-shadow: 0 0 0 3px rgba(75, 83, 32, 0.5);
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    nav ul {
+        margin-top: 1rem;
+    }
+
+    #sudoku-board {
+        max-width: 100%;
+        margin: 20px auto;
+    }
+
+    #sudoku-board td {
+        width: 50px;
+        height: 50px;
+    }
+
+    #sudoku-board input {
+        font-size: 1rem;
+    }
+
+    .controls {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .number-keyboard {
+        max-width: 300px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-content p {
+        margin-bottom: 0.5rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    #sudoku-board td {
+        width: 30px;
+        height: 30px;
+    }
+
+    #sudoku-board input {
+        font-size: 0.9rem;
+    }
 }
